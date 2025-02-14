@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP YOUR JOURNEY</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #16cd16;
+            text-align: center;
+        }
+
+        header {
+            background-color: #6a4caf;
+            color: rgb(235, 231, 231);
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .container {
+            padding: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .transport-selection {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .transport-selection img {
+            width: 100px;
+            height: auto;
+        }
+
+        .form, .payment, .selection {
+            background: #fff;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form input, .payment input, .payment select, .selection button {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #151615;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #6315e187;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SWAP YOUR JOURNEY</h1>
+    </header>
+    
+    <div id="page1" class="container">
+        <h2>Choose Your Mode of Transport</h2>
+        <div class="transport-selection">
+            <img src="RTC.jpg" alt="RTC Bus">
+            <button onclick="selectTransport('RTC')">RTC</button>
+            <button onclick="selectTransport('Private')">Private Travels</button>
+            <img src="PRIVATETRAVELS.jpg" alt="Private Bus">
+        </div>
+    </div>
+
+    <div id="page2" class="container" style="display: none;">
+        <h2>Do you want to Sell or Buy a Ticket?</h2>
+        <button onclick="showSellPage()">Sell Ticket</button>
+        <button onclick="showBuyPage()">Buy Ticket</button>
+        <button onclick="goBack('page1')">Back</button>
+    </div>
+
+    <div id="sellPage" class="container" style="display: none;">
+        <div class="form">
+            <h2>Sell a Ticket</h2>
+            <input type="text" id="ticketNumber" placeholder="Ticket Number">
+            <input type="text" id="busNumber" placeholder="Bus Number">
+            <input type="text" id="startPoint" placeholder="Starting Point">
+            <input type="text" id="destination" placeholder="Destination">
+            <input type="date" id="journeyDate">
+            <input type="number" id="price" placeholder="Price">
+            <button onclick="sellTicket()">Post Ticket</button>
+            <button onclick="goBack('page2')">Back</button>
+        </div>
+    </div>
+
+    <div id="buyPage" class="container" style="display: none;">
+        <div class="ticket-list">
+            <h2>Available Tickets</h2>
+            <div id="tickets"></div>
+            <button onclick="goBack('page2')">Back</button>
+        </div>
+    </div>
+
+    <div id="buyNowPage" class="container" style="display: none;">
+        <h2>Confirm Purchase</h2>
+        <p id="ticketDetails"></p>
+        <button onclick="showPaymentPage()">Proceed to Payment</button>
+        <button onclick="goBack('buyPage')">Back</button>
+    </div>
+
+    <div id="paymentPage" class="container" style="display: none;">
+        <h2>Payment</h2>
+        <p id="paymentDetails"></p>
+        <button onclick="confirmPayment()">Confirm Payment</button>
+        <button onclick="goBack('buyNowPage')">Back</button>
+    </div>
+
+    <script>
+        let tickets = [];
+
+        function selectTransport(type) {
+            document.getElementById("page1").style.display = "none";
+            document.getElementById("page2").style.display = "block";
+        }
+
+        function showSellPage() {
+            document.getElementById("page2").style.display = "none";
+            document.getElementById("sellPage").style.display = "block";
+        }
+
+        function showBuyPage() {
+            document.getElementById("page2").style.display = "none";
+            document.getElementById("buyPage").style.display = "block";
+            displayTickets();
+        }
+
+        function goBack(previousPage) {
+            document.querySelectorAll('.container').forEach(page => page.style.display = 'none');
+            document.getElementById(previousPage).style.display = "block";
+        }
+
+        function sellTicket() {
+            const ticket = {
+                startPoint: document.getElementById("startPoint").value,
+                destination: document.getElementById("destination").value,
+                busNumber: document.getElementById("busNumber").value,
+                price: document.getElementById("price").value
+            };
+            tickets.push(ticket);
+            alert("Ticket posted successfully!");
+            goBack('page2');
+        }
+
+        function displayTickets() {
+            const ticketContainer = document.getElementById("tickets");
+            ticketContainer.innerHTML = "";
+            tickets.forEach((ticket, index) => {
+                const ticketElement = document.createElement("div");
+                ticketElement.innerHTML = `<p>${ticket.startPoint} to ${ticket.destination} - ${ticket.price} USD <button onclick="buyNow(${index})">Buy Now</button></p>`;
+                ticketContainer.appendChild(ticketElement);
+            });
+        }
+
+        function buyNow(index) {
+            const ticket = tickets[index];
+            document.getElementById("ticketDetails").innerText = `${ticket.startPoint} to ${ticket.destination} - ${ticket.price} USD`;
+            goBack('buyNowPage');
+        }
+
+        function showPaymentPage() {
+            document.getElementById("paymentDetails").innerText = document.getElementById("ticketDetails").innerText;
+            goBack('paymentPage');
+        }
+
+        function confirmPayment() {
+            alert("Payment successful!");
+            goBack('page1');
+        }
+    </script>
+</body>
+</html>
